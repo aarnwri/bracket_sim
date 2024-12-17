@@ -6,5 +6,4 @@
 
 # Project data
 data/*
-!data/.gitkeep
 !data/**/.gitkeep
