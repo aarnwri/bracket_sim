@@ -1,0 +1,36 @@
+#! /usr/bin/env ruby
+
+require_relative '../lib/meta'
+require_relative '../lib/bracket/bracket'
+
+require 'optparse'
+
+global_subtext = <<HELP
+Commonly used commands are:
+   create   :   creates a new bracket
+   update   :   updates an existing bracket
+   delete   :   removes an existing bracket
+   simulate :   simulate an existing bracket
+See 'bracket.rb COMMAND --help' for more information on a specific command.
+HELP
+
+global_parser  = OptionParser.new do |opts|
+  opts.banner = "Usage: bracket.rb [options] [COMMAND [options]]"
+  opts.separator ""
+  opts.separator global_subtext
+  opts.on('-v', '--verbose', 'really wordy, yay...')
+end
+
+global_options = {}
+global_parser.order!(into: global_options)
+command = ARGV.shift
+
+handler = case command
+when "create"   then HandlerCreate.new
+when "update"   then HandlerUpdate.new
+when "delete"   then HandlerDelete.new
+when "simulate" then HandlerSimulate.new
+end
+
+handler.handle_argv
+handler.handle_action
