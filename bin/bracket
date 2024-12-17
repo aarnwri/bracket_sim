@@ -1,7 +1,9 @@
 #! /usr/bin/env ruby
 
-require_relative '../lib/meta'
-require_relative '../lib/bracket/bracket'
+require_relative '../lib/bin_helpers/handler_create'
+require_relative '../lib/bin_helpers/handler_update'
+require_relative '../lib/bin_helpers/handler_delete'
+require_relative '../lib/bin_helpers/handler_simulate'
 
 require 'optparse'
 
