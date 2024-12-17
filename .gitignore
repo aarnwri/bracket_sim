@@ -1,0 +1,10 @@
+# Mac files
+.DS_Store
+
+# Custom hide file, for starting a new project with old content
+.hidden
+
+# Project data
+data/*
+!data/.gitkeep
+!data/**/.gitkeep
