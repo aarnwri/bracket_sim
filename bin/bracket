@@ -20,7 +20,7 @@ See 'bracket.rb COMMAND --help' for more information on a specific command.
 HELP
 
 global_parser  = OptionParser.new do |opts|
-  opts.banner = "\nUsage: bracket.rb [options] [COMMAND [options]]"
+  opts.banner = "Usage: bracket.rb [options] [COMMAND [options]]"
   opts.separator global_subtext
 end
 
