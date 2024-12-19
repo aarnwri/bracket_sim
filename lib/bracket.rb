@@ -3,8 +3,16 @@ require_relative './meta'
 require 'yaml'
 
 class Bracket
+
+  ### CLASS METHODS
+
+  def self.list_all
+    regex = File.join(Meta.brackets_dir, "*")
+    Dir.glob(regex).map {|f| File.basename(f).gsub(".yaml", "")}
+  end
+
   def self.create (name:, folder: Meta.brackets_dir)
-    bracket_file = File.join(folder, name)
+    bracket_file = bracket_file_name(name:, folder:)
     if File.exist?(bracket_file)
       raise BracketExistsError.new(bracket: name)
     end
@@ -19,12 +27,38 @@ class Bracket
     File.open(bracket_file, 'w') {|f| f.write(data.to_yaml)}
   end
 
+  def self.delete (name:, folder: Meta.brackets_dir)
+    bracket_file = bracket_file_name(name:, folder:)
+    unless File.exist?(bracket_file)
+      raise BracketNotFoundError.new(bracket: name)
+    end
+
+    File.delete(bracket_file)
+  end
+
+  def self.bracket_file_name (name:, folder: Meta.brackets_dir)
+    File.join(folder, "#{name}.yaml")
+  end
+
+  def self.team_file_name (name:, folder: Meta.teams_dir)
+    File.join(Meta.teams_dir, "#{name}_teams.yaml")
+  end
+
+  ### INSTANCE METHODS
+
   def initialize (name:, folder: Meta.brackets_dir)
-    @bracket_file = File.join(folder, name)
+    @name         = name
+    @bracket_file = Bracket.bracket_file_name(name:, folder:)
     unless File.exist?(@bracket_file)
-      raise MissingBracketError.new(bracket: name)
+      raise BracketNotFoundError.new(bracket: name)
     end
     @bracket_data = load_bracket_data
+  end
+
+  attr_reader :name, :bracket_file, :bracket_data
+
+  def delete
+    Bracket.delete(name: @name)
   end
 
   def load_bracket_data
@@ -33,6 +67,69 @@ class Bracket
 
   def save_bracket_data
     File.open(@bracket_file, 'w') {|file| file.write(@bracket_data.to_yaml)}
+  end
+
+  def add_team (name:)
+    raise AlreadyStartedError.new          if started?
+    raise TeamAlreadyAddedError.new(name:) if team_present?(name:)
+
+    @bracket_data[:teams] << name
+    save_bracket_data
+  end
+
+  def remove_team (name:)
+    raise AlreadyStartedError.new      if started?
+    raise TeamNotFoundError.new(name:) unless team_present?(name:)
+
+    @bracket_data[:teams].delete(name)
+    save_bracket_data
+  end
+
+  def import_teams (file:)
+    unless File.exist?(file)
+      raise TeamsFileNotFoundError.new(file:)
+    end
+
+    begin
+      content = YAML.load_file(file)
+      unless content.is_a?(Hash) &&
+             content.has_key?('teams') &&
+             content['teams'].is_a?(Array)
+        raise TeamsFileParsingError.new(file:)
+      end
+    rescue Psych::SyntaxError => e
+      raise TeamsFileParsingError.new(file:)
+    end
+
+    @bracket_data[:teams] = content['teams']
+    save_bracket_data
+  end
+
+  def export_teams
+    team_file = Bracket.team_file_name(name: @name)
+    team_data = {
+      'teams' => @bracket_data[:teams]
+    }
+
+    File.open(team_file, 'w') {|file| file.write(team_data.to_yaml)}
+  end
+
+  def start
+    @bracket_data[:started] = true
+    populate_first_round
+    save_bracket_data
+  end
+
+  def populate_first_round
+    # TODO: Implement
+  end
+
+  def started?
+    @bracket_data[:started]
+  end
+
+  def team_present? (name:)
+    @bracket_data[:teams].include?(name)
   end
 
   ### ERRORS
@@ -45,7 +142,7 @@ class Bracket
     end
   end
 
-  class MissingBracketError < StandardError
+  class BracketNotFoundError < StandardError
     DEFAULT_MSG = "Bracket not found"
     def initialize(msg: DEFAULT_MSG, bracket: nil)
       msg = "Bracket '#{bracket}' not found" if bracket
@@ -53,4 +150,42 @@ class Bracket
     end
   end
 
+  class TeamsFileNotFoundError < StandardError
+    DEFAULT_MSG = "Teams file not found"
+    def initialize(msg: DEFAULT_MSG, file: nil)
+      msg = "Teams file '#{file}' not found" if file
+      super(msg)
+    end
+  end
+
+  class TeamsFileParsingError < StandardError
+    DEFAULT_MSG = "Teams file not parsable"
+    def initialize(msg: DEFAULT_MSG, file: nil)
+      msg = "Teams file '#{file}' not parsable" if file
+      super(msg)
+    end
+  end
+
+  class AlreadyStartedError < StandardError
+    DEFAULT_MSG = "Bracket is already started"
+    def initialize(msg: DEFAULT_MSG)
+      super(msg)
+    end
+  end
+
+  class TeamAlreadyAddedError < StandardError
+    DEFAULT_MSG = "Team is already added"
+    def initialize(msg: DEFAULT_MSG, name: nil)
+      msg = "Team '#{name}' was already added to the bracket" if name
+      super(msg)
+    end
+  end
+
+  class TeamNotFoundError < StandardError
+    DEFAULT_MSG = "Team not found"
+    def initialize(msg: DEFAULT_MSG, name: nil)
+      msg = "Team '#{name}' could not be found in the bracket" if name
+      super(msg)
+    end
+  end
 end

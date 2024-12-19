@@ -3,7 +3,7 @@ class Parser
     []
   end
 
-  def missing_options(options)
+  def missing_options (options)
     required_options - options.keys
   end
 
@@ -11,7 +11,7 @@ class Parser
     raise "Not Implemented"
   end
 
-  def parse(args)
+  def parse (args)
     @options = {}
     self.parser.parse!(into: @options)
     @options

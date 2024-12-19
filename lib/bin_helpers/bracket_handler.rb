@@ -5,10 +5,7 @@ require_relative '../bracket'
 class BracketHandler < Handler
   def require_existing_bracket
     begin
-      @bracket = Bracket.new(
-        name:         @options[:bracket_name],
-        brackets_dir: Meta.brackets_dir
-      )
+      bracket = Bracket.new(name: @options[:bracket_name])
     rescue Bracket::BracketNotFoundError => error
       puts "\n#{error.message}"
       puts "Please choose the name of an existing bracket.\n\n"
