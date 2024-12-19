@@ -1,7 +1,9 @@
 #! /usr/bin/env ruby
 
+require_relative '../lib/bin_helpers/handler_list'
 require_relative '../lib/bin_helpers/handler_create'
 require_relative '../lib/bin_helpers/handler_update'
+require_relative '../lib/bin_helpers/handler_export'
 require_relative '../lib/bin_helpers/handler_delete'
 require_relative '../lib/bin_helpers/handler_simulate'
 
@@ -10,10 +12,12 @@ require 'optparse'
 global_subtext = <<HELP
 
 Commonly used commands are:
-   create   :   creates a new bracket
-   update   :   updates an existing bracket
-   delete   :   removes an existing bracket
-   simulate :   simulate an existing bracket
+    list     :    lists existing brackets
+    create   :    creates a new bracket
+    update   :    updates an existing bracket
+    export   :    export content from an existing bracket
+    delete   :    removes an existing bracket
+    simulate :    simulate an existing bracket
 
 See 'bracket.rb COMMAND --help' for more information on a specific command.
 
@@ -29,8 +33,10 @@ global_parser.order!(into: global_options)
 command = ARGV.shift
 
 handler = case command
+when "list"     then HandlerList.new
 when "create"   then HandlerCreate.new
 when "update"   then HandlerUpdate.new
+when "export"   then HandlerExport.new
 when "delete"   then HandlerDelete.new
 when "simulate" then HandlerSimulate.new
 end
