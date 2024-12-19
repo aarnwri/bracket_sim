@@ -7,14 +7,14 @@ class Meta
   end
 
   def self.data_dir
-    @@data_dir ||= File.join(self.root_dir, 'data')
+    @@data_dir ||= File.join(root_dir, 'data')
   end
 
   def self.brackets_dir
-    @@data_dir ||= File.join(self.data_dir, 'brackets')
+    @@brackets_dir ||= File.join(data_dir, 'brackets')
   end
 
-  def self.teams
-    @@data_dir ||= File.join(self.data_dir, 'teams')
+  def self.teams_dir
+    @@teams_dir ||= File.join(data_dir, 'teams')
   end
 end
