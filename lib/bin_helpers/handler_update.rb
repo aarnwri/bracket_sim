@@ -92,9 +92,16 @@ class HandlerUpdate < BracketHandler
   end
 
   def start_bracket
-    @bracket.start
-    puts "\nThe bracket has been successfully started. No more changes may be made"
-    puts "\nYou may now start reporting scores as they come in"
+    begin
+      @bracket.start
+      puts "\nThe bracket has been successfully started. No more changes may be made"
+      puts "\nYou may now start reporting scores as they come in"
+
+    rescue Bracket::AlreadyStartedError => error
+      puts "\n#{error.message}"
+      puts "Please choose a bracket that's not already started.\n\n"
+      exit(1)
+    end
   end
 
   # def report_score

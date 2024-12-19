@@ -1,4 +1,5 @@
 require_relative './meta'
+require_relative './bracket_round'
 
 require 'yaml'
 
@@ -115,13 +116,17 @@ class Bracket
   end
 
   def start
+    raise AlreadyStartedError.new if started?
+
     @bracket_data[:started] = true
     populate_first_round
     save_bracket_data
   end
 
   def populate_first_round
-    # TODO: Implement
+    round = Bracket::Round.create_via_teams(teams: @bracket_data[:teams])
+    @bracket_data[:rounds] << round.to_hash
+    save_bracket_data
   end
 
   def started?
