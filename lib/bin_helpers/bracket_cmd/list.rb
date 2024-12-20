@@ -1,4 +1,3 @@
-class BracketCmd; end
 class BracketCmd::List < BracketCmd
   def initialize
     @options = {}
