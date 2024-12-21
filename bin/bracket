@@ -1,12 +1,6 @@
 #! /usr/bin/env ruby
 
 require_relative '../lib/bin_helpers/bracket_cmd'
-require_relative '../lib/bin_helpers/handler_list'
-require_relative '../lib/bin_helpers/handler_create'
-require_relative '../lib/bin_helpers/handler_update'
-require_relative '../lib/bin_helpers/handler_export'
-require_relative '../lib/bin_helpers/handler_delete'
-require_relative '../lib/bin_helpers/handler_simulate'
 
 require 'optparse'
 
@@ -31,31 +25,14 @@ end
 
 global_options = {}
 global_parser.order!(into: global_options)
-command = ARGV.shift
+cmd = ARGV.shift
 
-# TODO: Convert all handlers to commands, to simplify the Update Handler
-handler = case command
-# when "list"     then HandlerList.new
-when "create"   then HandlerCreate.new
-when "update"   then HandlerUpdate.new
-when "export"   then HandlerExport.new
-when "delete"   then HandlerDelete.new
-when "simulate" then HandlerSimulate.new
-else
-  nil
+cmd_inst = case cmd
+when "list"     then BracketCmd::List.new
+when "create"   then BracketCmd::Create.new
+when "update"   then BracketCmd::Update.new
+when "export"   then BracketCmd::Export.new
+when "delete"   then BracketCmd::Delete.new
+when "simulate" then BracketCmd::Simulate.new
 end
-
-if handler
-  handler.handle_argv
-  handler.handle_action
-end
-
-cmd_runner = case command
-when "list" then BracketCmd::List.new
-else
-  nil
-end
-
-if cmd_runner
-  cmd_runner.run
-end
+cmd_inst.run

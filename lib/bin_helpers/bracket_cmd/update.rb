@@ -1,32 +1,29 @@
-require_relative './bracket_handler'
-require_relative './parser'
-
-class HandlerUpdate < BracketHandler
-  class OptParser < Parser
-    def parser
-      @parser ||= OptionParser.new do |opts|
-        opts.banner = "Usage: bracket update [options]"
-        opts.on('-b BRACKET_NAME', '--bracket_name BRACKET_NAME', 'name of the bracketed event')
-        opts.on('-a TEAM_NAME', '--add TEAM_NAME', 'name of the team to add to the bracket')
-        opts.on('-t TEAMS_FILE', '--teams TEAMS_FILE', 'name of yaml file with list of teams')
-        opts.on('-d TEAM_NAME', '--delete TEAM_NAME', 'name of the team to delete from the bracket')
-        # opts.on('-r [GAME_NUM, POINTS_TEAM1, POINTS_TEAM2]', '--report [GAME_NUM, POINTS_TEAM1, POINTS_TEAM2]')
-        opts.on('-s', '--start', 'starts the bracket, indicates all teams have been added, and scores are now reportable')
-      end
+class BracketCmd::Update < BracketCmd
+  def initialize
+    @options = {}
+    @parser  = OptionParser.new do |opts|
+      opts.banner = "Usage: bracket update [options]"
+      opts.on('-b BRACKET_NAME', '--bracket_name BRACKET_NAME', 'name of the bracketed event')
+      opts.on('-a TEAM_NAME', '--add TEAM_NAME', 'name of the team to add to the bracket')
+      opts.on('-t TEAMS_FILE', '--teams TEAMS_FILE', 'name of yaml file with list of teams')
+      opts.on('-d TEAM_NAME', '--delete TEAM_NAME', 'name of the team to delete from the bracket')
+      opts.on('-s', '--start', 'starts the bracket, indicates all teams have been added, and scores are now reportable')
+      opts.on('-r', '--report', 'report game status')
+      opts.on('--round ROUND_ID', 'id of the round for the game being reported')
+      opts.on('--game GAME_ID', 'id of the game for the game being reported')
+      opts.on('--team TEAM_NAME', 'name of the team for the game being reported')
+      opts.on('--score SCORE', 'score for the provided team for the game being reported')
+      opts.on('--started STARTED', 'whether or not the game is started for the game being reported')
+      opts.on('--finished FINISHED', 'whether or not the game is finished for the game being reported')
     end
-
-    def required_options
-      [:bracket_name]
-    end
+    @parser.parse!(into: @options)
+    require_opts(:bracket_name)
+    require_opts(:round, :game) if @options[:report]
+    require_opts(:score) if @options[:team]
   end
 
-  def handle_argv
-    @options = super(parserClass: HandlerUpdate::OptParser)
-  end
-
-  def handle_action
+  def run
     @bracket = require_existing_bracket
-
     add_team      if @options[:add]
     import_teams  if @options[:teams]
     remove_team   if @options[:delete]
@@ -40,12 +37,10 @@ class HandlerUpdate < BracketHandler
       puts "\nThe team #{@options[:add]} has been successfully added to the list"
       display_teams
       puts "\n"
-
     rescue Bracket::AlreadyStartedError => error
       puts "\n#{error.message}"
       puts "Please choose a bracket that's not already started.\n\n"
       exit(1)
-
     rescue Bracket::TeamAlreadyAddedError => error
       puts "\n#{error.message}"
       puts "Please choose a team not already on the list for this event.\n\n"
@@ -59,12 +54,10 @@ class HandlerUpdate < BracketHandler
       puts "\nThe teams from #{@options[:file]} have been successfully added to the list"
       display_teams
       puts "\n"
-
     rescue Bracket::TeamsFileNotFoundError => error
       puts "\n#{error.message}"
       puts "Please make sure the teams file exists if you're going to specify one.\n\n"
       exit(1)
-
     rescue Bracket::TeamsFileParsingError => error
       puts "\n#{error.message}"
       puts "Make sure the file is a valid YAML file with the required 'teams' key.\n\n"
@@ -78,12 +71,10 @@ class HandlerUpdate < BracketHandler
       puts "\nThe team #{@options[:delete]} has been successfully removed from the list"
       display_teams
       puts "\n"
-
     rescue Bracket::AlreadyStartedError => error
       puts "\n#{error.message}"
       puts "Please choose a bracket that's not already started.\n\n"
       exit(1)
-
     rescue Bracket::TeamNotFoundError => error
       puts "\n#{error.message}"
       puts "Please choose a team that is on the list for this event.\n\n"
@@ -96,7 +87,6 @@ class HandlerUpdate < BracketHandler
       @bracket.start
       puts "\nThe bracket has been successfully started. No more changes may be made"
       puts "\nYou may now start reporting scores as they come in"
-
     rescue Bracket::AlreadyStartedError => error
       puts "\n#{error.message}"
       puts "Please choose a bracket that's not already started.\n\n"
@@ -104,12 +94,20 @@ class HandlerUpdate < BracketHandler
     end
   end
 
-  # def report_score
-  #   # TODO: Make this work
-  #   #2.) Make sure the bracket has been started already
-  #   #3.) Make sure the referenced game exists
-  #   #4.) Make sure the input has a valid format
-  # end
+  def report_score
+    begin
+      @bracket.report_score(
+        :round_id => @options[:round],
+        :game_id  => @options[:game_id],
+        :team     => @options[:team],
+        :score    => @options[:score],
+        :started  => @options[:started],
+        :finished => @options[:finished]
+      )
+    rescue
+
+    end
+  end
 
   def display_teams
     puts "Current Teams:"

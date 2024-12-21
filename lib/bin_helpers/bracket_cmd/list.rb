@@ -4,7 +4,6 @@ class BracketCmd::List < BracketCmd
     @parser  = OptionParser.new do |opts|
       opts.banner = "Usage: bracket list [options]"
     end
-
     @parser.parse!(into: @options)
   end
 

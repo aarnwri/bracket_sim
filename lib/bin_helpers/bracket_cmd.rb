@@ -1,6 +1,26 @@
 require_relative '../bracket'
 
 class BracketCmd
+
+  def require_opts (*opts)
+    missing_opts = opts - @options.keys
+    unless missing_opts.empty?
+      str_options = missing_opts.map {|str| "'#{str.to_s}'"}
+      puts "Error: Missing required option(s): #{str_options.join(', ')}"
+      exit(1)
+    end
+  end
+
+  def require_existing_bracket
+    begin
+      bracket = Bracket.new(name: @options[:bracket_name])
+    rescue Bracket::BracketNotFoundError => error
+      puts "\n#{error.message}"
+      puts "Please choose the name of an existing bracket.\n\n"
+      exit(1)
+    end
+  end
+
   def run
     raise NotImplementedError
   end
