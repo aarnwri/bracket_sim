@@ -42,6 +42,15 @@ class Bracket::Round
     @games << game
   end
 
+  def report (game_id:, team:, score:, started:, finished:)
+    puts "@games: #{@games.inspect}"
+    puts "game_id: #{game_id.inspect}"
+    game = @games.select {|game| game.id == game_id.to_i}.first
+    raise GameNotFoundError.new(game_id:) unless game
+
+    game.report(team:, score:, started:, finished:)
+  end
+
   def winning_teams
     @games.map(&:winner)
   end
@@ -54,5 +63,13 @@ class Bracket::Round
   # round is finished.
   def all_games_scored?
     @games.all? {|game| game.team_1_score && game.team_2_score}
+  end
+
+  class GameNotFoundError < StandardError
+    DEFAULT_MSG = "Game not found"
+    def initialize(msg: DEFAULT_MSG, game_id: nil)
+      msg = "Game '#{game_id}' not found" if game_id
+      super(msg)
+    end
   end
 end

@@ -28,7 +28,7 @@ class BracketCmd::Update < BracketCmd
     import_teams  if @options[:teams]
     remove_team   if @options[:delete]
     start_bracket if @options[:start]
-    report_score  if @options[:report]
+    report        if @options[:report]
   end
 
   def add_team
@@ -94,19 +94,20 @@ class BracketCmd::Update < BracketCmd
     end
   end
 
-  def report_score
-    begin
-      @bracket.report_score(
+  def report
+    # TODO: rescue anticipated errors from this...
+    # begin
+      @bracket.report(
         :round_id => @options[:round],
-        :game_id  => @options[:game_id],
+        :game_id  => @options[:game],
         :team     => @options[:team],
         :score    => @options[:score],
         :started  => @options[:started],
         :finished => @options[:finished]
       )
-    rescue
-
-    end
+    # rescue
+    #
+    # end
   end
 
   def display_teams

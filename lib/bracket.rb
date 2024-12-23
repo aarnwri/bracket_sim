@@ -63,7 +63,11 @@ class Bracket
   end
 
   def load_bracket_data
-    YAML.load_file(@bracket_file)
+    YAML.load_file(
+      @bracket_file,
+      permitted_classes: [Bracket::Round, Bracket::Game, Symbol],
+      aliases: true
+    )
   end
 
   def save_bracket_data
@@ -135,18 +139,18 @@ class Bracket
     save_bracket_data
   end
 
-  def report_score (round_id:, game_id:, team:, score:, started:, finished:)
+  def report (round_id:, game_id:, team:, score:, started:, finished:)
+    puts "game_id: #{game_id.inspect}"
     round = round_by_id(id: round_id)
     raise RoundNotFoundError.new(round_id:) unless round
 
-    round.report_score(game_id:, team:, score:, started:, finished:)
+    round.report(game_id:, team:, score:, started:, finished:)
     save_bracket_data
   end
 
   def round_by_id (id:)
-    round_idx  = id - 1
-    round_hash = @bracket_data[:rounds][round_idx]
-    round = Bracket::Round.new()
+    round_idx = id.to_i - 1
+    round     = @bracket_data[:rounds][round_idx]
   end
 
   def started?
@@ -210,6 +214,14 @@ class Bracket
     DEFAULT_MSG = "Team not found"
     def initialize(msg: DEFAULT_MSG, name: nil)
       msg = "Team '#{name}' could not be found in the bracket" if name
+      super(msg)
+    end
+  end
+
+  class RoundNotFoundError < StandardError
+    DEFAULT_MSG = "Round not found"
+    def initialize(msg: DEFAULT_MSG, round_id: nil)
+      msg = "Round '#{round_id}' not found" if round_id
       super(msg)
     end
   end
