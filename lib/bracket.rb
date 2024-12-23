@@ -67,7 +67,7 @@ class Bracket
   end
 
   def save_bracket_data
-    File.open(@bracket_file, 'w') {|file| file.write(@bracket_data.to_yaml)}
+    File.open(@bracket_file, 'w') {|file| file.write(YAML::dump(@bracket_data))}
   end
 
   def add_team (name:)
@@ -125,8 +125,28 @@ class Bracket
 
   def populate_first_round
     round = Bracket::Round.create_via_teams(teams: @bracket_data[:teams])
-    @bracket_data[:rounds] << round.to_hash
+    @bracket_data[:rounds] << round
     save_bracket_data
+  end
+
+  def populate_next_round
+    round = Bracket::Round.create_via_prev_round(round: @bracket_data[:rounds].last)
+    @bracket_data[:rounds] << round
+    save_bracket_data
+  end
+
+  def report_score (round_id:, game_id:, team:, score:, started:, finished:)
+    round = round_by_id(id: round_id)
+    raise RoundNotFoundError.new(round_id:) unless round
+
+    round.report_score(game_id:, team:, score:, started:, finished:)
+    save_bracket_data
+  end
+
+  def round_by_id (id:)
+    round_idx  = id - 1
+    round_hash = @bracket_data[:rounds][round_idx]
+    round = Bracket::Round.new()
   end
 
   def started?
