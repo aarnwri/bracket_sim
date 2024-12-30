@@ -140,7 +140,6 @@ class Bracket
   end
 
   def report (round_id:, game_id:, team:, score:, started:, finished:)
-    puts "game_id: #{game_id.inspect}"
     round = round_by_id(id: round_id)
     raise RoundNotFoundError.new(round_id:) unless round
 

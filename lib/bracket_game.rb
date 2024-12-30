@@ -38,4 +38,8 @@ class Bracket::Game
       @team_2_score = score
     end
   end
+
+  def scores
+    [@team_1_score, @team_2_score]
+  end
 end

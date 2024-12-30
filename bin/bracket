@@ -10,6 +10,7 @@ Commonly used commands are:
     list     :    lists existing brackets
     create   :    creates a new bracket
     update   :    updates an existing bracket
+    show     :    show the status of an existing bracket
     export   :    export content from an existing bracket
     delete   :    removes an existing bracket
     simulate :    simulate an existing bracket
@@ -31,6 +32,7 @@ cmd_inst = case cmd
 when "list"     then BracketCmd::List.new
 when "create"   then BracketCmd::Create.new
 when "update"   then BracketCmd::Update.new
+when "show"     then BracketCmd::Show.new
 when "export"   then BracketCmd::Export.new
 when "delete"   then BracketCmd::Delete.new
 when "simulate" then BracketCmd::Simulate.new

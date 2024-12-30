@@ -43,8 +43,6 @@ class Bracket::Round
   end
 
   def report (game_id:, team:, score:, started:, finished:)
-    puts "@games: #{@games.inspect}"
-    puts "game_id: #{game_id.inspect}"
     game = @games.select {|game| game.id == game_id.to_i}.first
     raise GameNotFoundError.new(game_id:) unless game
 
