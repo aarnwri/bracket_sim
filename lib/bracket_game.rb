@@ -44,51 +44,51 @@ class Bracket::Game
   end
 
   def start
-      @started = true
-    end
+    @started = true
+  end
 
-    def finish
-      @finished = true
-    end
+  def finish
+    @finished = true
+  end
 
-    def winner
-      return nil unless winner?
-      return @team_1 if @team_2.nil?
+  def winner
+    return nil unless winner?
+    return @team_1 if @team_2.nil?
 
-      winner = (@team_1_score > @team_2_score) ? @team_1 : @team_2
-    end
+    winner = (@team_1_score > @team_2_score) ? @team_1 : @team_2
+  end
 
-    def simulate_with_winner
-      start
-      @team_1_score = 0
-      @team_2_score = 0
-      5.times {rand(2) < 1 ? (@team_1_score += 1) : @team_2_score += 1}
-      finish
-    end
+  def simulate_with_winner
+    start
+    @team_1_score = 0
+    @team_2_score = 0
+    5.times {rand(2) < 1 ? (@team_1_score += 1) : @team_2_score += 1}
+    finish
+  end
 
-    def simulate_with_tie
-      start
-      @team_1_score = 3
-      @team_2_score = 3
-      finish
-    end
+  def simulate_with_tie
+    start
+    @team_1_score = 3
+    @team_2_score = 3
+    finish
+  end
 
-    def simulate_with_winner_or_tie
-      start
-      6.times {rand(2) < 1 ? (@team_1_score += 1) : @team_2_score += 1}
-      finish
-    end
+  def simulate_with_winner_or_tie
+    start
+    6.times {rand(2) < 1 ? (@team_1_score += 1) : @team_2_score += 1}
+    finish
+  end
 
-    def started?
-      @started
-    end
+  def started?
+    @started
+  end
 
-    def finished?
-      @finished
-    end
+  def finished?
+    @finished
+  end
 
-    def winner?
-      return true if @team_2.nil?
-      @finished && @team_1_score != @team_2_score
-    end
+  def winner?
+    return true if @team_2.nil?
+    @finished && @team_1_score != @team_2_score
+  end
 end
