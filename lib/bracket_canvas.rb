@@ -20,8 +20,11 @@ class Bracket::Canvas < Canvas
       start_loc = Canvas::Loc.new(x: 0, y: 0)
       end_loc   = Canvas::Loc.new(x: game_length(round:) - 1, y: 0)
     else
-      start_loc = end_loc.add(delta_x: 2, delta_y: 0)
-      end_loc   = start_loc.add(delta_x: game_length(round:) - 1, delta_y: 0)
+      prev_start_loc = @loc_data.last[:start_loc]
+      prev_end_loc   = @loc_data.last[:end_loc]
+
+      start_loc = prev_end_loc.add(delta_x: 4, delta_y: 0)
+      end_loc   = prev_end_loc.add(delta_x: game_length(round:) + 3, delta_y: 0)
     end
 
     @loc_data << {
