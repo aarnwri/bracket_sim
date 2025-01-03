@@ -134,7 +134,8 @@ class Bracket
   end
 
   def populate_next_round
-    round = Bracket::Round.create_via_prev_round(round: @bracket_data[:rounds].last)
+    last_round = @bracket_data[:rounds].last
+    round      = Bracket::Round.create_via_prev_round(prev_round: last_round)
     @bracket_data[:rounds] << round
     save_bracket_data
   end
@@ -147,6 +148,18 @@ class Bracket
     save_bracket_data
   end
 
+  def simulate
+    start unless started?
+
+    current_round = @bracket_data[:rounds].last
+    until last_round_started? && current_round.all_games_scored?
+      current_round.simulate_with_winners
+      save_bracket_data
+      populate_next_round unless last_round_started?
+      current_round = @bracket_data[:rounds].last
+    end
+  end
+
   def round_by_id (id:)
     round_idx = id.to_i - 1
     round     = @bracket_data[:rounds][round_idx]
@@ -154,6 +167,10 @@ class Bracket
 
   def started?
     @bracket_data[:started]
+  end
+
+  def last_round_started?
+    @bracket_data[:rounds].last.games.count == 1
   end
 
   def team_present? (name:)

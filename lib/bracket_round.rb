@@ -23,7 +23,9 @@ class Bracket::Round
     teams        = prev_round.winning_teams # Assumes order is preserved so that brackets line up
 
     teams.each_slice(2).with_index do |(team_1, team_2), i|
-      game = Bracket::Game.new(id: (i + 1 + last_game_id), round:, team_1:, team_2:)
+      game = Bracket::Game.new(
+        id: (i + 1 + last_game_id), round:, team_1:, team_2:
+      )
       round.add_game(game:)
     end
 
