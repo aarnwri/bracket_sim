@@ -13,6 +13,8 @@ class Canvas
     @grid = Array.new(y.to_i) {Array.new(x.to_i)}
   end
 
+  attr_reader :grid
+
   def size_x
     @grid.count > 0 ? @grid[0].count : 0
   end
@@ -77,6 +79,15 @@ class Canvas
 
     # Replace grid content with str
     @grid[loc.y][loc.x, str.length] = str.chars
+  end
+
+  def layer_canvas (canvas:, loc:)
+    canvas.grid.each_with_index do |row, idx|
+      insert_str_at_loc(
+        str: row.join(""),
+        loc: loc.add(delta_x: 0, delta_y: idx)
+      )
+    end
   end
 
   def render
