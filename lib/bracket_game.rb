@@ -91,4 +91,22 @@ class Bracket::Game
     return true if @team_2.nil?
     @finished && @team_1_score != @team_2_score
   end
+
+  def team_1_parent_game
+    prev_round = round.prev_round
+    return nil unless prev_round
+
+    prev_round.games.select {|game| game.teams.include?(team_1)}
+  end
+
+  def team_2_parent_game
+    prev_round = round.prev_round
+    return nil unless prev_round
+
+    prev_round.games.select {|game| game.teams.include?(team_2)}
+  end
+
+  def teams
+    [team_1, team_2]
+  end
 end
