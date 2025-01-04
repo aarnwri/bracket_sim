@@ -1,5 +1,5 @@
 require_relative './meta'
-require_relative './bracket_round'
+require_relative './bracket/round'
 
 require 'yaml'
 
