@@ -1,5 +1,4 @@
 require_relative '../bracket'
-require_relative '../bracket_canvas'
 
 class BracketCmd
 

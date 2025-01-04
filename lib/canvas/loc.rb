@@ -14,4 +14,9 @@ class Canvas::Loc
       y: y + delta_y
     )
   end
+
+  def move (delta_x: nil, delta_y: nil)
+    @x += delta_x.to_i
+    @y += delta_y.to_i
+  end
 end

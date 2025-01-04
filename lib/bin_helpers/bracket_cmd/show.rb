@@ -1,3 +1,5 @@
+require_relative '../../canvas/bracket'
+
 class BracketCmd::Show < BracketCmd
   def initialize
     @options = {}
@@ -10,7 +12,8 @@ class BracketCmd::Show < BracketCmd
 
   def run
     @bracket = require_existing_bracket
-    @canvas  = Bracket::Canvas.new(bracket: @bracket)
+    # @canvas  = Bracket::Canvas.new(bracket: @bracket)
+    @canvas  = Canvas::Bracket.new(bracket: @bracket).painted
 
     @canvas.render
   end
