@@ -6,7 +6,7 @@ class Canvas::Loc
     @y = y
   end
 
-  attr_reader :x, :y
+  attr_accessor :x, :y
 
   def add (delta_x:, delta_y:)
     Canvas::Loc.new(
