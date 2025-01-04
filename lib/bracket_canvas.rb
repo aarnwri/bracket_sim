@@ -46,15 +46,13 @@ class Bracket::Canvas < Canvas
     line_3_str = team_2_str(round:, game:)
     line_4_str = game_border_str(round:)
 
-    line_1_loc = grid_loc
-    line_2_loc = grid_loc.add(delta_x: 0, delta_y: 1)
-    line_3_loc = grid_loc.add(delta_x: 0, delta_y: 2)
-    line_4_loc = grid_loc.add(delta_x: 0, delta_y: 3)
+    game_canvas = Canvas.new()
+    game_canvas.insert_str_at_loc(str: line_1_str, loc: Canvas::Loc.new(x: 0, y: 0))
+    game_canvas.insert_str_at_loc(str: line_2_str, loc: Canvas::Loc.new(x: 0, y: 1))
+    game_canvas.insert_str_at_loc(str: line_3_str, loc: Canvas::Loc.new(x: 0, y: 2))
+    game_canvas.insert_str_at_loc(str: line_4_str, loc: Canvas::Loc.new(x: 0, y: 3))
 
-    insert_str_at_loc(str: line_1_str, loc: line_1_loc)
-    insert_str_at_loc(str: line_2_str, loc: line_2_loc)
-    insert_str_at_loc(str: line_3_str, loc: line_3_loc)
-    insert_str_at_loc(str: line_4_str, loc: line_4_loc)
+    layer_canvas(canvas: game_canvas, loc: grid_loc)
   end
 
   def max_len_game_id_var (round:)
