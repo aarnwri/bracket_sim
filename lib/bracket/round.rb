@@ -1,4 +1,4 @@
-require_relative '../bracket_game'
+require_relative './game'
 
 class Bracket; end
 class Bracket::Round
