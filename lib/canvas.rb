@@ -1,4 +1,4 @@
-require_relative './canvas_loc'
+require_relative './canvas/loc'
 
 require 'io/console'
 
