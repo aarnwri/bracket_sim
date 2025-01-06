@@ -5,5 +5,7 @@
 .hidden
 
 # Project data
-data/*
+data/brackets/*
+data/teams/*
 !data/**/.gitkeep
+!data/teams/teams_ex.yaml
