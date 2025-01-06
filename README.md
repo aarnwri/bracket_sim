@@ -21,7 +21,8 @@ $ ./bin/bracket create -b tourney_name -t ./data/teams/teams_ex.yaml
 $ ./bin/bracket simulate -b tourney_name
 $ ./bin/bracket show -b tourney_name
 ```
-<!-- ![example output of show command](https://github.com/[aarnwri]/[bracket_sim]/blob/[main]/ex_sim.png?raw=true) -->
+
+##### Example Results
 ![example output of show command](/ex_sim.png)
 
 ### TODO List (should I decide to take it further)
