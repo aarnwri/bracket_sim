@@ -19,4 +19,8 @@ class Canvas::Loc
     @x += delta_x.to_i
     @y += delta_y.to_i
   end
+
+  def same_as? (loc:)
+    loc.x == x && loc.y == y
+  end
 end

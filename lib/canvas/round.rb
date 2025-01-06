@@ -6,8 +6,11 @@ class Canvas::Round
     @round      = round
     @prev_round = prev_round
 
-    @canvas = Canvas.new
+    @canvas    = Canvas.new
+    @game_locs = []
   end
+
+  attr_reader :game_locs
 
   def size_x
     Canvas::Game.size_x(
@@ -34,17 +37,21 @@ class Canvas::Round
   # TODO: Change the location based on the location of the parent games of the
   # previous round
   def paint_next_round
-    game_loc = Canvas::Loc.new(x: 0, y: 0)
+    @prev_round.game_locs.each_slice(2).with_index do |(game_loc_1, game_loc_2), i|
+      game_loc = Canvas::Loc.new(
+        x: 0,
+        y: (game_loc_1.y + game_loc_2.y) / 2
+      )
 
-    @round.games.each do |game|
       game_canvas = Canvas::Game.new(
-        game:          game,
+        game:          @round.games[i],
         len_id_col:    max_len_id_col,
         len_name_col:  max_len_name_col,
         len_score_col: max_len_score_col
       )
       @canvas.layer_canvas(canvas: game_canvas.painted, loc: game_loc)
-      game_loc.move(delta_y: game_canvas.size_y + 2)
+
+      @game_locs << game_loc
     end
 
     @canvas
@@ -61,6 +68,8 @@ class Canvas::Round
         len_score_col: max_len_score_col
       )
       @canvas.layer_canvas(canvas: game_canvas.painted, loc: game_loc)
+
+      @game_locs << game_loc.dup
       game_loc.move(delta_y: game_canvas.size_y + 2)
     end
 
