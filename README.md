@@ -30,7 +30,7 @@ $ ./bin/bracket show -b tourney_name
 * Handle erroneous user input in the update function
 * Clean up TODOs in the application
 * Think about refactoring, drawing the lines is complicated/inefficient
-* Support Bys
+* Support Byes
 * Enforce at least an even number of teams, if not a power of 2
 * Be able to handle rounds going off the right edge of the screen
 * Support double elimination
